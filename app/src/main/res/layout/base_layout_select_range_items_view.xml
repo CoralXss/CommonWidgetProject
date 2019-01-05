@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="24dp"
+    android:paddingRight="24dp"
+    android:layout_marginTop="10dp">
+
+    <LinearLayout
+        android:id="@+id/contentView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="14dp"
+        android:layout_marginBottom="14dp"/>
+
+    <com.coral.widget.VerticalRangeSlideSeekBar
+        android:id="@+id/rangeSlideSeekBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        app:base_imageSize="28dp"
+        app:base_strokeWidth="2dp"
+        app:base_tickLineHeight="8dp"
+        app:base_avgLineWidth="48dp"
+        app:base_lineColor="@color/lightGray"
+        app:base_rangeLineColor="@color/lightBlue"
+        app:base_selectedLowIndex="0"
+        app:base_selectedHighIndex="1" />
+
+</FrameLayout>
