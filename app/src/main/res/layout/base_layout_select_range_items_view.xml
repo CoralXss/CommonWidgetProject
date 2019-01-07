@@ -13,7 +13,8 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_marginTop="14dp"
-        android:layout_marginBottom="14dp"/>
+        android:layout_marginBottom="14dp"
+        android:layout_marginRight="14dp"/>
 
     <com.coral.widget.VerticalRangeSlideSeekBar
         android:id="@+id/rangeSlideSeekBar"

@@ -10,6 +10,7 @@ import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -56,8 +57,9 @@ public class SelectRangeItemsView extends FrameLayout {
         slideSeekBar.setOnRangeChangedListener(new VerticalRangeSlideSeekBar.OnRangeChangedListener() {
             @Override
             public void onRange(int lowIndex, int highIndex) {
-                for (int i = lowIndex; i < highIndex; i ++) {
-                    contentView.getChildAt(i).setBackgroundColor(Color.parseColor("#0D1989FA"));
+                int size = contentView.getChildCount();
+                for (int i = 0; i < size; i++) {
+                    setItemSelected(contentView.getChildAt(i), i >= lowIndex && i <= highIndex);
                 }
             }
         });
@@ -75,7 +77,7 @@ public class SelectRangeItemsView extends FrameLayout {
         for (int i = 0; i < size; i++) {
             TextView tv = new TextView(getContext());
             if (i >= beginIndex && i < endIndex) {
-                tv.setBackgroundColor(Color.parseColor("#0D1989FA"));
+                setItemSelected(tv, true);
             }
             tv.setText(datas.get(i));
             tv.setGravity(Gravity.CENTER_VERTICAL);
@@ -83,6 +85,9 @@ public class SelectRangeItemsView extends FrameLayout {
 
             contentView.addView(tv, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, slideSeekBar.getAvgLineLength()));
         }
+    }
 
+    private void setItemSelected(View view, boolean isSelected) {
+        view.setBackgroundColor(isSelected ? Color.parseColor("#0D1989FA") : Color.WHITE);
     }
 }
