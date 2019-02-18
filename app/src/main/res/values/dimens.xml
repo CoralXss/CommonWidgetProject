@@ -3,8 +3,4 @@
     <dimen name="order_range_select_thumbnail_size">32dp</dimen>
     <dimen name="order_range_select_list_margin">16dp</dimen>
 
-    <dimen name="base_range_select_thumbnail_padding">1dp</dimen>
-    <dimen name="base_range_select_thumbnail_corner">4dp</dimen>
-    <dimen name="base_range_select_thumbnail_corner_half">2dp</dimen>
-
 </resources>

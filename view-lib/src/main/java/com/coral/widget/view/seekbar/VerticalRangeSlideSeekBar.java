@@ -1,4 +1,4 @@
-package com.coral.widget;
+package com.coral.widget.view.seekbar;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -13,6 +13,8 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+
+import com.coral.widget.view.R;
 
 /**
  * Created by xss on 2019/1/3.
@@ -113,8 +115,8 @@ public class VerticalRangeSlideSeekBar extends View {
         }
 
         if (mLowDrawable == null || mHighDrawable == null) {
-            mLowDrawable = getResources().getDrawable(R.drawable.base_icon_range_seek_bar_thumbnail);
-            mHighDrawable = getResources().getDrawable(R.drawable.base_icon_range_seek_bar_thumbnail);
+            mLowDrawable = getResources().getDrawable(R.drawable.base_icon_default_range_seek_bar_thumbnail);
+            mHighDrawable = getResources().getDrawable(R.drawable.base_icon_default_range_seek_bar_thumbnail);
         }
 
         log(TAG,  "mImageSize = " + mImageSize + ", " + mAvgLineWidth);

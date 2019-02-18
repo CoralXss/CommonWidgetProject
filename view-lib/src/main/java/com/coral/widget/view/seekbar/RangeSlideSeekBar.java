@@ -1,4 +1,4 @@
-package com.coral.widget;
+package com.coral.widget.view.seekbar;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -14,6 +14,8 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+
+import com.coral.widget.view.R;
 
 /**
  * Created by xss on 2019/1/3.
@@ -57,10 +59,10 @@ public class RangeSlideSeekBar extends View {
         mBitmapPaint = new Paint();
 
         if (mBitmapLow == null) {
-            mBitmapLow = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher_round);
+            mBitmapLow = BitmapFactory.decodeResource(getResources(), R.mipmap.base_ic_launcher_round);
         }
         if (mBitmapHigh == null) {
-            mBitmapHigh = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher_round);
+            mBitmapHigh = BitmapFactory.decodeResource(getResources(), R.mipmap.base_ic_launcher_round);
         }
 
         /**游标图片的真实高度 之后通过缩放比例可以把图片设置成想要的大小*/

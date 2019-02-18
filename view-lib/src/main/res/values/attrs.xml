@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--纵向滑动选择器-->
+    <declare-styleable name="base_VerticalRangeSlideSeekBar">
+        <attr name="base_imageSrc" format="reference" />
+        <attr name="base_imageSize" format="dimension" />
+        <attr name="base_strokeWidth" format="dimension" />
+        <attr name="base_tickLineHeight" format="dimension" />
+        <attr name="base_tickLineCount" format="integer" />
+        <attr name="base_avgLineWidth" format="dimension" />
+        <attr name="base_lineColor" format="color" />
+        <attr name="base_rangeLineColor" format="color" />
+        <attr name="base_selectedLowIndex" format="integer" />
+        <attr name="base_selectedHighIndex" format="integer" />
+        <attr name="base_orientation" format="enum">
+            <enum name="vertical" value="0" />
+            <enum name="horizontal" value="1" />
+        </attr>
+    </declare-styleable>
+
+
+
+</resources>

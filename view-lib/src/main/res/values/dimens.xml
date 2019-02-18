@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="base_range_select_thumbnail_padding">1dp</dimen>
+    <dimen name="base_range_select_thumbnail_corner">4dp</dimen>
+    <dimen name="base_range_select_thumbnail_corner_half">2dp</dimen>
+
+</resources>
