@@ -60,7 +60,7 @@
         <attr name="smallValue" />
     </declare-styleable>
 
-    <declare-styleable name="RangeSlideSeekBar">
+    <declare-styleable name="base_VerticalRangeSlideSeekBar">
         <attr name="base_imageSrc" format="reference" />
         <attr name="base_imageSize" format="dimension" />
         <attr name="base_strokeWidth" format="dimension" />

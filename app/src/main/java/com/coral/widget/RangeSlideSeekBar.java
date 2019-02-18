@@ -17,6 +17,7 @@ import android.view.View;
 
 /**
  * Created by xss on 2019/1/3.
+ * 横向滑动选择器
  */
 public class RangeSlideSeekBar extends View {
     private static final String TAG = RangeSlideSeekBar.class.getSimpleName();

@@ -2,12 +2,10 @@ package com.coral.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
@@ -18,18 +16,21 @@ import android.view.View;
 
 /**
  * Created by xss on 2019/1/3.
+ * 纵向滑动选择器
  */
 public class VerticalRangeSlideSeekBar extends View {
     private static final String TAG = VerticalRangeSlideSeekBar.class.getSimpleName();
 
     private Paint mLinePaint;
-    private Paint mBitmapPaint;
 
+    // 线条颜色
     private int mLineColor = Color.GRAY;
+    // 选中区间线条颜色
     private int mRangeLineColor = Color.BLUE;
 
-    private Bitmap mBitmapLow;
-    private Bitmap mBitmapHigh;
+    // 上下游标图标
+    private Drawable mLowDrawable, mHighDrawable;
+
     // thumbnail图片大小
     private int mImageSize = 54 * 2;
 
@@ -39,7 +40,7 @@ public class VerticalRangeSlideSeekBar extends View {
     private int mTickLineCount = 5;
     // 刻度线高度
     private int mTickLineHeight = 24;
-    // 进度条长度
+    // 进度条长度（注意：必须满足条件 mAvgLineWidth > mImageSize）
     private int mAvgLineWidth = 144 + 36;
     // 初始固定值，刻度线的起点和终点x位置
     private int mLineStart, mLineEnd;
@@ -61,10 +62,10 @@ public class VerticalRangeSlideSeekBar extends View {
     // 选中的区间index
     private int mSelectedLowIndex, mSelectedHighIndex;
 
-    // 刻度线的方向
-    private int mOrientation;
-
     private OnRangeChangedListener mOnRangeChangedListener;
+
+    // 容错滑动距离
+    private static final int EXTRA_SPACE = 30;
 
     public VerticalRangeSlideSeekBar(Context context) {
         super(context);
@@ -89,22 +90,21 @@ public class VerticalRangeSlideSeekBar extends View {
 
     private void init(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         mLinePaint = new Paint();
-        mBitmapPaint = new Paint();
 
-        TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.RangeSlideSeekBar, defStyleAttr, 0);
-        mBitmapLow = mBitmapHigh = BitmapFactory.decodeResource(getResources(), ta.getResourceId(R.styleable.RangeSlideSeekBar_base_imageSrc, 0));
-        mImageSize = (int) ta.getDimension(R.styleable.RangeSlideSeekBar_base_imageSize, 28);
+        TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.base_VerticalRangeSlideSeekBar, defStyleAttr, 0);
+        mImageSize = (int) ta.getDimension(R.styleable.base_VerticalRangeSlideSeekBar_base_imageSize, 28);
 
-        mStrokeWidth = (int) ta.getDimension(R.styleable.RangeSlideSeekBar_base_strokeWidth, 2);
-        mTickLineHeight = (int) ta.getDimension(R.styleable.RangeSlideSeekBar_base_tickLineHeight, 8);
-        mTickLineCount = ta.getInt(R.styleable.RangeSlideSeekBar_base_tickLineCount, 5);
-        mAvgLineWidth = (int) ta.getDimension(R.styleable.RangeSlideSeekBar_base_avgLineWidth, 48);
-        mLineColor = ta.getColor(R.styleable.RangeSlideSeekBar_base_lineColor, Color.GRAY);
-        mRangeLineColor = ta.getColor(R.styleable.RangeSlideSeekBar_base_rangeLineColor, Color.BLUE);
-        mSelectedLowIndex = ta.getInt(R.styleable.RangeSlideSeekBar_base_selectedLowIndex, 0);
-        mSelectedHighIndex = ta.getInt(R.styleable.RangeSlideSeekBar_base_selectedHighIndex, 1);
+        mLowDrawable = ta.getDrawable(R.styleable.base_VerticalRangeSlideSeekBar_base_imageSrc);
+        mHighDrawable = ta.getDrawable(R.styleable.base_VerticalRangeSlideSeekBar_base_imageSrc);
 
-        mOrientation = ta.getInt(R.styleable.RangeSlideSeekBar_base_orientation, 0);
+        mStrokeWidth = (int) ta.getDimension(R.styleable.base_VerticalRangeSlideSeekBar_base_strokeWidth, 2);
+        mTickLineHeight = (int) ta.getDimension(R.styleable.base_VerticalRangeSlideSeekBar_base_tickLineHeight, 8);
+        mTickLineCount = ta.getInt(R.styleable.base_VerticalRangeSlideSeekBar_base_tickLineCount, 5);
+        mAvgLineWidth = (int) ta.getDimension(R.styleable.base_VerticalRangeSlideSeekBar_base_avgLineWidth, 48);
+        mLineColor = ta.getColor(R.styleable.base_VerticalRangeSlideSeekBar_base_lineColor, Color.GRAY);
+        mRangeLineColor = ta.getColor(R.styleable.base_VerticalRangeSlideSeekBar_base_rangeLineColor, Color.BLUE);
+        mSelectedLowIndex = ta.getInt(R.styleable.base_VerticalRangeSlideSeekBar_base_selectedLowIndex, 0);
+        mSelectedHighIndex = ta.getInt(R.styleable.base_VerticalRangeSlideSeekBar_base_selectedHighIndex, 1);
 
         ta.recycle();
 
@@ -112,40 +112,13 @@ public class VerticalRangeSlideSeekBar extends View {
             throw new IllegalArgumentException("selectedHighIndex value must above selectedLowIndex and below tickLineCount");
         }
 
-        initCursorBmp();
-    }
-
-    private void initCursorBmp() {
-        if (mBitmapLow == null) {
-            mBitmapLow = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher_round);
-        }
-        if (mBitmapHigh == null) {
-            mBitmapHigh = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher_round);
+        if (mLowDrawable == null || mHighDrawable == null) {
+            mLowDrawable = getResources().getDrawable(R.drawable.base_icon_range_seek_bar_thumbnail);
+            mHighDrawable = getResources().getDrawable(R.drawable.base_icon_range_seek_bar_thumbnail);
         }
 
-        /**游标图片的真实高度 之后通过缩放比例可以把图片设置成想要的大小*/
-        int mBitmapHeight = mBitmapLow.getHeight();
-        int mBitmapWidth = mBitmapLow.getWidth();
-        // 设置想要的大小
-        int newWidth = mImageSize;
-        int newHeight = mImageSize;
-        // 计算缩放比例
-        float scaleWidth = ((float) newWidth) / mBitmapWidth;
-        float scaleHeight = ((float) newHeight) / mBitmapHeight;
-        Matrix matrix = new Matrix();
-        matrix.postScale(scaleWidth, scaleHeight);
-        /**缩放图片*/
-        mBitmapLow = Bitmap.createBitmap(mBitmapLow, 0, 0, mBitmapWidth, mBitmapHeight, matrix, true);
-        mBitmapHigh = Bitmap.createBitmap(mBitmapHigh, 0, 0, mBitmapWidth, mBitmapHeight, matrix, true);
-        /**重新获取游标图片的宽高*/
-        mImageSize = mBitmapLow.getWidth();
-
-        Log.e(TAG,  "mImageSize = " + mImageSize);
+        log(TAG,  "mImageSize = " + mImageSize + ", " + mAvgLineWidth);
     }
-
-//    private boolean isHorizontal() {
-//        return mOrientation == Orientation.HORIZONTAL.ordinal();
-//    }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -182,7 +155,7 @@ public class VerticalRangeSlideSeekBar extends View {
         mLinePaint.setColor(mLineColor);
         canvas.drawLine(mLineStart, mImageSize / 2 - mStrokeWidth / 2, mLineStart, mLineEnd, mLinePaint);
 
-        Log.e(TAG, "draw line: " + mSelectedLowIndex + ", " + mSelectedHighIndex);
+        log(TAG, "draw line: " + mSelectedLowIndex + ", " + mSelectedHighIndex);
         // 画选中的区间线
         mLinePaint.setColor(mRangeLineColor);
         canvas.drawLine(mLineStart, mSlideLow + mImageSize / 2, mLineStart, mSlideHigh + mLineStart, mLinePaint);
@@ -197,9 +170,11 @@ public class VerticalRangeSlideSeekBar extends View {
     }
 
     private void drawThumbnail(Canvas canvas) {
-        Log.e(TAG, "drawThumb: " + mSlideLow + ", " + mSlideHigh + ", " + mLineStart + ", " + mLineEnd);
-        canvas.drawBitmap(mBitmapLow, 0, mSlideLow,  mBitmapPaint);
-        canvas.drawBitmap(mBitmapLow, 0, mSlideHigh,  mBitmapPaint);
+        mLowDrawable.setBounds(0, mSlideLow, mImageSize, mImageSize + mSlideLow);
+        mLowDrawable.draw(canvas);
+
+        mHighDrawable.setBounds(0, mSlideHigh, mImageSize, mImageSize + mSlideHigh);
+        mHighDrawable.draw(canvas);
     }
 
     @Override
@@ -214,16 +189,16 @@ public class VerticalRangeSlideSeekBar extends View {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
 
-                Log.e(TAG, "down: " + currentY + ", " + mSlideLow + ", " + mSlideHigh + ", isAtCursor = " + isAtCursor);
+                log(TAG, "down: " + currentY + ", " + mSlideLow + ", " + mSlideHigh + ", isAtCursor = " + isAtCursor);
                 boolean lowSlide = Math.abs(currentY - mSlideLow) < mImageSize;
                 boolean highSlide = Math.abs(currentY - mSlideHigh) < mImageSize;
 
                 if (isAtCursor && lowSlide) {
-                    Log.e(TAG, "low slide");
+                    log(TAG, "low slide");
                     isLowSliding = true;
                 } else if (isAtCursor && highSlide) {
                     isHighSliding = true;
-                    Log.e(TAG, "high slide");
+                    log(TAG, "high slide");
                 }
 
                 // 消除 点击动作 造成的无效移动（区分滑动效果）
@@ -236,21 +211,21 @@ public class VerticalRangeSlideSeekBar extends View {
 
                 boolean isClick = Float.compare(currentY, mPreSlide) == 0;
 
-                Log.e(TAG, "move " + msg + ": " + currentY + ", " + mSlideLow + ", " + mSlideHigh + ", " + mPreSlide + ", " + (isClick));
+                log(TAG, "move " + msg + ": " + currentY + ", " + mSlideLow + ", " + mSlideHigh + ", " + mPreSlide + ", " + (isClick));
 
                 if (isLowSliding && !isClick) {
-                    if (mSlideHigh - currentY >= mAvgLineWidth && currentY >= 0) { // 第二个条件控制左滑的边界
+                    if (mSlideHigh - currentY >= mAvgLineWidth - EXTRA_SPACE && currentY >= 0) { // 控制左滑的边界
                         mSlideLow = (int) currentY;
                         postInvalidate();
                     } else {
-                        Log.e(TAG, "---low thumb cannot slide---");
+                        log(TAG, "---low thumb cannot slide---");
                     }
                 } else if (isHighSliding && !isClick) {
-                    if (currentY - mSlideLow >= mAvgLineWidth && currentY <= mLineEnd - mImageSize / 2) {
+                    if (currentY - mSlideLow >= mAvgLineWidth && currentY <= mLineEnd) {
                         mSlideHigh = (int) currentY;
                         postInvalidate();
                     } else {
-                        Log.e(TAG, "---high thumb cannot slide---");
+                        log(TAG, "---high thumb cannot slide---");
                     }
                 }
 
@@ -261,14 +236,14 @@ public class VerticalRangeSlideSeekBar extends View {
 
                 if (isScroll) {
                     // 132.0, 0
-                    Log.e(TAG, "up" + isLowSliding + ", " + isHighSliding + isAtCursor);
+                    log(TAG, "up" + isLowSliding + ", " + isHighSliding + isAtCursor);
 
                     // 滑动停止时，确定滑块的刻度
                     if (isLowSliding) {
                         int rangeLow = (mSlideLow - mLineStart) / mAvgLineWidth;
                         int rangeSpan = (mSlideLow - mLineStart) % mAvgLineWidth;
 
-                        Log.e(TAG, "up low: " + currentY + ", " + mSlideLow + ", rangeLow=" + rangeLow + ", rangeSpan=" + rangeSpan);
+                        log(TAG, "up low: " + currentY + ", " + mSlideLow + ", rangeLow=" + rangeLow + ", rangeSpan=" + rangeSpan);
 
                         if (rangeSpan <= mAvgLineWidth / 2) {
                             mSelectedLowIndex = rangeLow;
@@ -284,7 +259,7 @@ public class VerticalRangeSlideSeekBar extends View {
                         int rangeHigh = (mSlideHigh - mLineStart) / mAvgLineWidth;
                         int rangeHighSpan = (mSlideHigh - mLineStart) % mAvgLineWidth;
 
-                        Log.e(TAG, "up high: " + currentY + ", " + mSlideHigh + ", rangeLow=" + rangeHigh + ", rangeHighSpan=" + rangeHighSpan);
+                        log(TAG, "up high: " + currentY + ", " + mSlideHigh + ", rangeLow=" + rangeHigh + ", rangeHighSpan=" + rangeHighSpan);
 
                         if (rangeHighSpan <= mAvgLineWidth / 2) {
                             mSelectedHighIndex = rangeHigh;
@@ -319,14 +294,18 @@ public class VerticalRangeSlideSeekBar extends View {
         this.mTickLineCount = count;
     }
 
-    public void setSelectedLowIndex(int index) {
-        this.mSelectedLowIndex = index;
+    public void setSelectedRange(int lowIndex, int highIndex) {
+        this.mSelectedLowIndex = lowIndex;
+        this.mSelectedHighIndex = highIndex;
         requestLayout();
     }
 
-    public void setSelectedHighIndex(int index) {
-        this.mSelectedHighIndex = index;
-        requestLayout();
+    public int getSelectedLowIndex() {
+        return mSelectedLowIndex;
+    }
+
+    public int getSelectedHighIndex() {
+        return mSelectedHighIndex;
     }
 
     public int getAvgLineLength() {
@@ -340,8 +319,9 @@ public class VerticalRangeSlideSeekBar extends View {
     public interface OnRangeChangedListener {
         void onRange(int lowIndex, int highIndex);
     }
+    
+    private void log(String tag, String msg) {
+        Log.e(tag, msg);
+    }
 
-//    public enum Orientation {
-//        VERTICAL, HORIZONTAL
-//    }
 }

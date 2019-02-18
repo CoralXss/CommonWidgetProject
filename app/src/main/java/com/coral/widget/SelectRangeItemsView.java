@@ -1,6 +1,5 @@
 package com.coral.widget;
 
-import android.app.Fragment;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
@@ -69,8 +68,7 @@ public class SelectRangeItemsView extends FrameLayout {
         int size = datas.size();
 
         slideSeekBar.setTickCount(size + 1);
-        slideSeekBar.setSelectedLowIndex(beginIndex);
-        slideSeekBar.setSelectedHighIndex(endIndex);
+        slideSeekBar.setSelectedRange(beginIndex, endIndex);
 
         contentView.removeAllViews();
         contentView.setGravity(Gravity.CENTER_VERTICAL);
