@@ -17,7 +17,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".SelectRangeViewDemoActivity" />
-        <activity android:name=".FixedRecyclerViewDemoActivity"></activity>
+        <activity android:name=".FixedRecyclerViewDemoActivity" />
+        <activity android:name=".DynamicListViewDemoActivity"></activity>
     </application>
 
 </manifest>

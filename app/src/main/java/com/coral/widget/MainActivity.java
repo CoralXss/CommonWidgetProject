@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
         pageClassList = new ArrayList<>();
         pageClassList.add(SelectRangeViewDemoActivity.class);
         pageClassList.add(FixedRecyclerViewDemoActivity.class);
+        pageClassList.add(DynamicListViewDemoActivity.class);
 
     }
 
