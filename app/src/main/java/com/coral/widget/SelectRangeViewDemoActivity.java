@@ -4,6 +4,9 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
+import com.coral.widget.ui.DoubleSlideSeekBar;
+import com.coral.widget.ui.SelectRangeItemsView;
+
 import java.util.ArrayList;
 import java.util.List;
 

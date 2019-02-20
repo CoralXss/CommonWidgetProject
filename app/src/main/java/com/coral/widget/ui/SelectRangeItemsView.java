@@ -1,4 +1,4 @@
-package com.coral.widget;
+package com.coral.widget.ui;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -15,6 +15,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.coral.widget.R;
 import com.coral.widget.view.seekbar.VerticalRangeSlideSeekBar;
 
 import java.util.List;

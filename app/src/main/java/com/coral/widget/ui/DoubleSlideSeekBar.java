@@ -1,4 +1,4 @@
-package com.coral.widget;
+package com.coral.widget.ui;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -14,6 +14,8 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
+
+import com.coral.widget.R;
 
 /**
  * @author txs
