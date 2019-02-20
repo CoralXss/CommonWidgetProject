@@ -20,8 +20,10 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:27.1.1'
+//    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    // implementation 不能传递依赖，compile 可传递依赖，但不利于模块解耦，所有用implementation后，不能直接用view-lib的依赖
     implementation 'com.android.support:recyclerview-v7:27.1.1'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    implementation 'com.google.android:flexbox:0.3.2'
 
     implementation project(':view-lib')
 }

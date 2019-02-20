@@ -4,11 +4,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".DynamicListViewDemoActivity">
+    tools:context=".DynamicListViewDemoActivity"
+    android:orientation="vertical">
 
     <com.coral.widget.view.list.DynamicAddListView
         android:id="@+id/dynamicAddListView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+
+    <com.coral.widget.view.list.TagsView
+        android:id="@+id/tagsView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"/>
 
 </LinearLayout>
