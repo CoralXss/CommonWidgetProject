@@ -1,7 +1,14 @@
 package com.coral.widget;
 
-import android.support.v7.app.AppCompatActivity;
+import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.view.Gravity;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -9,65 +16,47 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private DoubleSlideSeekBar mDoubleslideWithrule;
-    private DoubleSlideSeekBar mDoubleslideWithoutrule;
-    private TextView mTvMinRule;
-    private TextView mTvMaxRule;
-    private TextView mTvMinWithoutRule;
-    private TextView mTvMaxWithoutRule;
+    private LinearLayout ll_content;
 
-    private SelectRangeItemsView rangeItemsView;
+    private List<Class> pageClassList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        rangeItemsView = findViewById(R.id.selectRangeView);
-
-        initView();
-        setListener();
-
         initData();
+        initView();
     }
 
     private void initData() {
-        List<String> days = new ArrayList<>();
-        for (int i = 0; i < 7; i++) {
-            if (i == 0) {
-                days.add("当天");
-            } else {
-                days.add("第" + (i + 1) + "天");
-            }
-        }
-
-        rangeItemsView.setItems(days, 0, 1);
-    }
-
-    private void setListener() {
-        // 用法
-        mDoubleslideWithrule.setOnRangeListener(new DoubleSlideSeekBar.onRangeListener() {
-            @Override
-            public void onRange(float low, float big) {
-                mTvMinRule.setText("最小值" + String.format("%.0f" , low));
-                mTvMaxRule.setText("最大值" + String.format("%.0f" , big));
-            }
-        });
-        mDoubleslideWithoutrule.setOnRangeListener(new DoubleSlideSeekBar.onRangeListener() {
-            @Override
-            public void onRange(float low, float big) {
-                mTvMinWithoutRule.setText("最小值" + String.format("%.0f" , low));
-                mTvMaxWithoutRule.setText("最大值" + String.format("%.0f" , big));
-            }
-        });
+        pageClassList = new ArrayList<>();
+        pageClassList.add(SelectRangeViewDemoActivity.class);
     }
 
     private void initView() {
-        mDoubleslideWithrule = (DoubleSlideSeekBar) findViewById(R.id.doubleslide_withrule);
-        mDoubleslideWithoutrule = (DoubleSlideSeekBar) findViewById(R.id.doubleslide_withoutrule);
-        mTvMinRule = (TextView) findViewById(R.id.tv_min_rule);
-        mTvMaxRule = (TextView) findViewById(R.id.tv_max_rule);
-        mTvMinWithoutRule = (TextView) findViewById(R.id.tv_min_without_rule);
-        mTvMaxWithoutRule = (TextView) findViewById(R.id.tv_max_without_rule);
+        ll_content = findViewById(R.id.ll_content);
+        ll_content.removeAllViews();
+        int count = pageClassList.size();
+        for (int i = 0; i < count; i++) {
+            TextView tv = new TextView(this);
+            tv.setPadding(20, 20, 0, 20);
+            tv.setTextColor(Color.WHITE);
+            tv.setText(pageClassList.get(i).getSimpleName());
+            tv.setBackgroundColor(ContextCompat.getColor(this, R.color.colorAccent));
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            lp.setMargins(0, 15, 0, 15);
+            ll_content.addView(tv, lp);
+
+            final int pos = i;
+            tv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(MainActivity.this, pageClassList.get(pos));
+                    startActivity(intent);
+                }
+            });
+        }
     }
+
 }
